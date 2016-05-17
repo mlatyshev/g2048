@@ -1,8 +1,8 @@
 #include "Game.h"
 
 Game::Game() {
-	window = nullptr;
-	renderer = nullptr;
+	window_ = nullptr;
+	renderer_ = nullptr;
 
 	srand((unsigned int)time(NULL));
 
@@ -10,6 +10,8 @@ Game::Game() {
 }
 
 Game::~Game() {
+	Clean();
+	SDL_Quit();
 }
 
 bool Game::Init() {
@@ -18,16 +20,16 @@ bool Game::Init() {
 		return false;
 	}
 
-	window = SDL_CreateWindow("2048", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 474, 474, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
-	if (window == nullptr) {
+	window_ = SDL_CreateWindow("2048", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 474, 474, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+	if (window_ == nullptr) {
 		std::cout << "Error creating window: " << SDL_GetError() << std::endl;
 		return false;
 	}
 
-	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-	if (renderer == nullptr) {
+	renderer_ = SDL_CreateRenderer(window_, -1, SDL_RENDERER_ACCELERATED);
+	if (renderer_ == nullptr) {
 		std::cout << "Error creating renderer: " << SDL_GetError() << std::endl;
-		SDL_DestroyWindow(window);
+		SDL_DestroyWindow(window_);
 		return false;
 	}
 
@@ -39,8 +41,14 @@ void Game::Clean() {
 //	SDL_DestroyTexture(texture);
 
 	// clean renderer and window
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
+	if (renderer_ != nullptr) {
+		SDL_DestroyRenderer(renderer_);
+		renderer_ = nullptr;
+	}
+	if (window_ != nullptr) {
+		SDL_DestroyWindow(window_);
+		window_ = nullptr;
+	}
 }
 
 void Game::onQuit() {
@@ -48,16 +56,17 @@ void Game::onQuit() {
 }
 
 void Game::onKeyDown(SDL_Event* e) {
-	keys[e->key.keysym.sym] = 1;
+	if (e->key.repeat = 0) {
+		keys[e->key.keysym.sym] = 1;
+	}
 }
 
 void Game::onKeyUp(SDL_Event* e) {
 	keys[e->key.keysym.sym] = 0;
-	pressedKeys[e->key.keysym.sym] = false;
 }
 
 void Game::Run() {
-	board = new Board(renderer);
+	board = new Board(renderer_);
 
 	NewGame();
 
@@ -231,42 +240,42 @@ void Game::MoveDown() {
 }
 
 void Game::Update() {
-	if ( keys[SDLK_LEFT] && !pressedKeys[SDLK_LEFT] && isCanMoveLeft ) {
+	if ( keys[SDLK_LEFT] && isCanMoveLeft ) {
 		// Состояние игры перед ходом
 		//PrintStatus();
 		//std::cout << "Move left" << std::endl;
-		pressedKeys[SDLK_LEFT] = true;
 		MoveLeft();
+		keys[SDLK_LEFT] = 0;
 		// Состояние игры после хода
 		//PrintStatus();
 		SpawnNumber();
 	}
-	if ( keys[SDLK_RIGHT] && !pressedKeys[SDLK_RIGHT] && isCanMoveRight ) {
+	if ( keys[SDLK_RIGHT] && isCanMoveRight ) {
 		// Состояние игры перед ходом
 		//PrintStatus();
 		//std::cout << "Move right" << std::endl;
-		pressedKeys[SDLK_RIGHT] = true;
 		MoveRight();
+		keys[SDLK_RIGHT] = 0;
 		// Состояние игры после хода
 		//PrintStatus();
 		SpawnNumber();
 	}
-	if ( keys[SDLK_UP] && !pressedKeys[SDLK_UP] && isCanMoveUp ) {
+	if ( keys[SDLK_UP] && isCanMoveUp ) {
 		// Состояние игры перед ходом
 		//PrintStatus();
 		//std::cout << "Move up" << std::endl;
-		pressedKeys[SDLK_UP] = true;
 		MoveUp();
+		keys[SDLK_UP] = 0;
 		// Состояние игры после хода
 		//PrintStatus();
 		SpawnNumber();
 	}
-	if ( keys[SDLK_DOWN] && !pressedKeys[SDLK_DOWN] && isCanMoveDown ) {
+	if ( keys[SDLK_DOWN] && isCanMoveDown ) {
 		// Состояние игры перед ходом
 		//PrintStatus();
 		//std::cout << "Move down" << std::endl;
-		pressedKeys[SDLK_DOWN] = true;
 		MoveDown();
+		keys[SDLK_DOWN] = 0;
 		// Состояние игры после хода
 		//PrintStatus();
 		SpawnNumber();
@@ -274,11 +283,11 @@ void Game::Update() {
 }
 
 void Game::Render() {
-	SDL_RenderClear(renderer);
+	SDL_RenderClear(renderer_);
 
 	board->Render();
 
-	SDL_RenderPresent(renderer);
+	SDL_RenderPresent(renderer_);
 }
 
 void Game::NewGame() {

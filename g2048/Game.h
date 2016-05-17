@@ -1,6 +1,6 @@
 #pragma once
 
-#include <SDL.h>
+#include <SDL2\SDL.h>
 #include <ctime>
 #include <map>
 
@@ -15,12 +15,12 @@ public:
 	bool Init();
 	void Run();
 private:
-	SDL_Window* window = nullptr;
-	SDL_Renderer* renderer = nullptr;
+	SDL_Window* window_;
+	SDL_Renderer* renderer_;
 	SDL_Texture* texture = nullptr;
 
 	Board* board = nullptr;
-	GameData* gameData = nullptr;
+	GameData* gameData;
 
 	bool isRunning = false;
 	bool isCanSpawn;
@@ -31,7 +31,6 @@ private:
 	bool isGameOwer = true;
 
 	std::map<int, int> keys;
-	std::map<int, int> pressedKeys;
 
 	void onQuit();
 	void onKeyDown(SDL_Event* e);

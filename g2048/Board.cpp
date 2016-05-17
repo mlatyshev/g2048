@@ -1,5 +1,9 @@
 #include "Board.h"
 
+void PutPixel32() {
+	//
+}
+
 Board::Board(SDL_Renderer* renderer): Entity(renderer) {
 
 	deskTexture = LoadTextureFromFile("Img\\background.bmp");

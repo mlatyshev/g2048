@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Entity.h"
+#include <SDL2\SDL.h>
+
 #include "GameData.h"
 
 #include <iostream>
@@ -12,7 +13,7 @@
 #define TILE_WIDTH 96
 #define TILE_HEIGHT 96
 
-class Board: public Entity {
+class Board {
 public:
 	Board(SDL_Renderer* renderer);
 	~Board();
