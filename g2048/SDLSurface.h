@@ -26,10 +26,10 @@ public:
 	int CreateSurface(int width, int height);
 	SDL_Surface *Get();
 	void SetDrawColor(Uint32 color);
-	void SetDrawColorRGB(Uint32 color, Uint8 r, Uint8 g, Uint8 b);
+	void SetDrawColorRGB(Uint8 r, Uint8 g, Uint8 b);
 	void LockSurface();
 	void UnlockSurface();
 	void PutPixel32(int x, int y);
 	void DrawHLine(int x1, int x2, int y);
-	void DrawRoundRect(Uint16 x1, Uint16 x2, Uint16 y1, Uint16 y2, Uint16 radius);
+	void DrawRoundRect(int x, int y, int width, int height, int radius);
 };

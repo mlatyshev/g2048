@@ -56,7 +56,7 @@ void Game::onQuit() {
 }
 
 void Game::onKeyDown(SDL_Event* e) {
-	if (e->key.repeat = 0) {
+	if (e->key.repeat == 0) {
 		keys[e->key.keysym.sym] = 1;
 	}
 }

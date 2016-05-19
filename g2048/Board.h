@@ -3,15 +3,16 @@
 #include <SDL2\SDL.h>
 
 #include "GameData.h"
+#include "SDLSurface.h"
 
 #include <iostream>
 #include <string>
 
-#define BOARD_WIDTH 474
-#define BOARD_HEIGHT 474
-
-#define TILE_WIDTH 96
-#define TILE_HEIGHT 96
+//#define BOARD_SIZE 474
+#define TILE_SIZE 96
+#define INTERVAL 18
+#define BOARD_SIZE TILE_SIZE * 4 + INTERVAL * 5
+#define RADIUS 8
 
 class Board {
 public:
@@ -19,10 +20,12 @@ public:
 	~Board();
 
 	SDL_Texture* LoadTextureFromFile(std::string path);
+	SDL_Texture *CreateBGTexture(int width, int height, int radius);
 
 	void Update();
 	void Render();
 private:
+	SDL_Renderer *renderer_;
 	SDL_Texture* deskTexture;
 	SDL_Texture* tile2Texture;
 	SDL_Texture* tile4Texture;

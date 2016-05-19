@@ -18,6 +18,7 @@ void SDLSurface::Free()
 {
 	if (surface_ != nullptr) {
 		SDL_FreeSurface(surface_);
+		surface_ = nullptr;
 		width_ = 0;
 		height_ = 0;
 	}
@@ -37,7 +38,19 @@ int SDLSurface::CreateRGBSurface(Uint32 flags, int width, int height, int depth,
 
 int SDLSurface::CreateSurface(int width, int height)
 {
-	return CreateRGBSurface(0, width, height, DEFAULT_DEPTH, DEFAULT_RMASK, DEFAULT_GMASK, DEFAULT_AMASK, DEFAULT_AMASK);
+	CreateRGBSurface(0, width, height, DEFAULT_DEPTH, DEFAULT_RMASK, DEFAULT_GMASK, DEFAULT_AMASK, DEFAULT_AMASK);
+	if (surface_ == nullptr) {
+		return 1;
+	}
+	SDL_Rect rect;
+	Uint32 color = SDL_MapRGB(surface_->format, 0xFF, 0xFF, 0xFF);
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = width_;
+	rect.h = height_;
+	SDL_FillRect(surface_, &rect, color);
+	SDL_SetColorKey(surface_, SDL_TRUE, color);
+	return 0;
 }
 
 SDL_Surface * SDLSurface::Get()
@@ -50,7 +63,7 @@ void SDLSurface::SetDrawColor(Uint32 color)
 	drawColor_ = color;
 }
 
-void SDLSurface::SetDrawColorRGB(Uint32 color, Uint8 r, Uint8 g, Uint8 b)
+void SDLSurface::SetDrawColorRGB(Uint8 r, Uint8 g, Uint8 b)
 {
 	drawColor_ = SDL_MapRGB(surface_->format, r, g, b);
 }
@@ -85,39 +98,38 @@ void SDLSurface::DrawHLine(int x1, int x2, int y)
 	}
 }
 
-void SDLSurface::DrawRoundRect(Uint16 x1, Uint16 x2, Uint16 y1, Uint16 y2, Uint16 radius)
+void SDLSurface::DrawRoundRect(int x, int y, int width, int height, int radius)
 {
-	Sint16 dx = 0;
-	Sint16 dy = radius;
-	Sint16 d = 3 - radius - radius;
-	Sint16 xl = x1 + radius;
-	Sint16 xr = x2 - radius;
-	Sint16 yu = y1 + radius;
-	Sint16 yd = y2 - radius;
-	Sint16 xlmdx, xlmdy, xrpdx, xrpdy;
-	Sint16 yumdy, yumdx, ydpdx, ydpdy;
+	int dx = 0;
+	int dy = radius;
+	int d = 3 - radius - radius;
+	int xl = x + radius;
+	int xr = width + x - radius - 1;
+	int yu = y + radius;
+	int yd = height + y - radius - 1;
+	int xlmdx, xlmdy, xrpdx, xrpdy;
+	int yumdy, yumdx, ydpdx, ydpdy;
 	SDL_Rect rect;
-	// Когда dx == dy линии дублируются, можно (нужно?) оптимизировать
-	while (dx <= dy) {
+	while (dx < dy) {
 		xlmdx = xl - dx;
 		xlmdy = xl - dy;
 		xrpdx = xr + dx;
 		xrpdy = xr + dy;
 		yumdy = yu - dy;
+		ydpdy = yd + dy;
 		yumdx = yu - dx;
 		ydpdx = yd + dx;
-		ydpdy = yd + dy;
 		DrawHLine(xlmdx, xrpdx, yumdy);
+		DrawHLine(xlmdx, xrpdx, ydpdy);
 		DrawHLine(xlmdy, xrpdy, yumdx);
 		DrawHLine(xlmdy, xrpdy, ydpdx);
-		DrawHLine(xlmdx, xrpdx, ydpdy);
 		if (d < 0) d += 4 * dx + 6;
 		else d += 4 * (dx - --dy) + 10;
 		dx++;
 	}
-	rect.x = x1;
-	rect.y = y1 + radius + 1;
-	rect.w = x2 - x1 + 1;
-	rect.h = y2 - y1 - radius - radius - 1;
+	rect.x = x;
+	rect.y = y + radius + 1;
+	rect.w = width;
+	rect.h = height - radius - radius - 2;
 	SDL_FillRect(surface_, &rect, drawColor_);
 }
