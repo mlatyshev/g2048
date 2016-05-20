@@ -6,7 +6,7 @@ Game::Game() {
 
 	srand((unsigned int)time(NULL));
 
-	gameData = GameData::getInstatce();
+	gameData = GameData::GameData::getInstatce();
 }
 
 Game::~Game() {
@@ -66,7 +66,7 @@ void Game::onKeyUp(SDL_Event* e) {
 }
 
 void Game::Run() {
-	board = new Board(renderer_);
+	board = new Board::Board(renderer_);
 
 	NewGame();
 

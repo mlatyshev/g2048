@@ -7,37 +7,40 @@
 
 #include <iostream>
 #include <string>
+#include <map>
 
-//#define BOARD_SIZE 474
+namespace Board {
+
 #define TILE_SIZE 96
 #define INTERVAL 18
 #define BOARD_SIZE TILE_SIZE * 4 + INTERVAL * 5
 #define RADIUS 8
 
-class Board {
-public:
-	Board(SDL_Renderer* renderer);
-	~Board();
+	struct Tile {
+		SDL_Texture *texture;
+		std::string text;
+		Uint32 txtColor;
+		Uint32 bgColor;
+	};
 
-	SDL_Texture* LoadTextureFromFile(std::string path);
-	SDL_Texture *CreateBGTexture(int width, int height, int radius);
+	class Board {
+	public:
+		Board(SDL_Renderer *renderer);
+		~Board();
 
-	void Update();
-	void Render();
-private:
-	SDL_Renderer *renderer_;
-	SDL_Texture* deskTexture;
-	SDL_Texture* tile2Texture;
-	SDL_Texture* tile4Texture;
-	SDL_Texture* tile8Texture;
-	SDL_Texture* tile16Texture;
-	SDL_Texture* tile32Texture;
-	SDL_Texture* tile64Texture;
-	SDL_Texture* tile128Texture;
-	SDL_Texture* tile256Texture;
-	SDL_Texture* tile512Texture;
-	SDL_Texture* tile1024Texture;
-	SDL_Texture* tile2048Texture;
+		SDL_Texture *LoadTextureFromFile(std::string path);
+		SDL_Texture *CreateBGTexture(int width, int height, int radius);
+		SDL_Texture *CreateTileTexture(int width, int height, int radius, Uint32 bgColor, Uint32 txtColor);
+		void CreateTileTexture(int tileNumber);
 
-	GameData* gameData;
-};
+		void Update();
+		void Render();
+	private:
+		SDL_Texture *deskTexture;
+		std::map<int, Tile> tiles;
+		SDL_Renderer *renderer_;
+
+		GameData::GameData *gameData;
+	};
+
+}

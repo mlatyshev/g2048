@@ -43,7 +43,8 @@ int SDLSurface::CreateSurface(int width, int height)
 		return 1;
 	}
 	SDL_Rect rect;
-	Uint32 color = SDL_MapRGB(surface_->format, 0xFF, 0xFF, 0xFF);
+	//Uint32 color = SDL_MapRGB(surface_->format, 0xFF, 0xFF, 0xFF);
+	Uint32 color = 0x00FFFFFF;
 	rect.x = 0;
 	rect.y = 0;
 	rect.w = width_;

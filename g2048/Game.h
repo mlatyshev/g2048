@@ -15,12 +15,12 @@ public:
 	bool Init();
 	void Run();
 private:
-	SDL_Window* window_;
-	SDL_Renderer* renderer_;
-	SDL_Texture* texture = nullptr;
+	SDL_Window *window_;
+	SDL_Renderer *renderer_;
+	SDL_Texture *texture = nullptr;
 
-	Board* board = nullptr;
-	GameData* gameData;
+	Board::Board *board = nullptr;
+	GameData::GameData *gameData;
 
 	bool isRunning = false;
 	bool isCanSpawn;
